@@ -1,0 +1,28 @@
+name: KiroCrew Issue Trigger
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  trigger-kirocrew:
+    # EC2 안의 self-hosted runner에서만 실행 — localhost의 KiroCrew 게이트웨이를 호출한다
+    runs-on: self-hosted
+    steps:
+      - name: Trigger KiroCrew agent session
+        env:
+          WEBHOOK_TOKEN: ${{ secrets.KIROCREW_WEBHOOK_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          REPO: ${{ github.repository }}
+        run: |
+          curl -sf -X POST http://localhost:5476/api/hooks/agent \
+            -H "Authorization: Bearer ${WEBHOOK_TOKEN}" \
+            -H "X-Internal-Secret: $(cat ~/.kiro/crew/.local_secret)" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n \
+              --arg msg "GitHub 이슈가 생성되었다. ${REPO}#${ISSUE_NUMBER} \"${ISSUE_TITLE}\" (${ISSUE_URL}) — gh CLI로 이슈 본문을 읽고 triage하라: 재현 가능한 버그면 원인을 조사해 분석 코멘트를 남기고, 정보가 부족하면 필요한 정보를 요청하는 코멘트를 남겨라." \
+              --arg key "hook:issue-${ISSUE_NUMBER}" \
+              --arg name "Issue #${ISSUE_NUMBER} triage" \
+              '{message: $msg, sessionKey: $key, name: $name, deliver: true}')"
