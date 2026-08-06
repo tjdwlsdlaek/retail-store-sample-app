@@ -27,6 +27,7 @@ import com.amazon.sample.ui.services.catalog.model.Product;
 import java.util.List;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 public class KiotaCartsService implements CartsService {
 
@@ -67,22 +68,22 @@ public class KiotaCartsService implements CartsService {
         return item;
       })
       .flatMap(i ->
-        Mono.just(
+        Mono.<Void>fromRunnable(() ->
           this.cartClient.carts().byCustomerId(sessionId).items().post(i)
-        )
+        ).subscribeOn(Schedulers.boundedElastic())
       )
       .then();
   }
 
   @Override
   public Mono<Void> removeItem(String sessionId, String productId) {
-    this.cartClient.carts()
-      .byCustomerId(sessionId)
-      .items()
-      .byItemId(productId)
-      .delete();
-
-    return Mono.empty();
+    return Mono.<Void>fromRunnable(() ->
+      this.cartClient.carts()
+        .byCustomerId(sessionId)
+        .items()
+        .byItemId(productId)
+        .delete()
+    ).subscribeOn(Schedulers.boundedElastic());
   }
 
   private Mono<Cart> createCart(
