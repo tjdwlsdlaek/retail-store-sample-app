@@ -22,7 +22,7 @@ jobs:
             -H "X-Internal-Secret: $(cat ~/.kiro/crew/.local_secret)" \
             -H "Content-Type: application/json" \
             -d "$(jq -n \
-              --arg msg "GitHub 이슈가 생성되었다: ${REPO}#${ISSUE_NUMBER} \"${ISSUE_TITLE}\" (${ISSUE_URL}). 다음 절차를 따르라. 1) gh issue view로 본문을 읽고 리포를 클론해 원인을 조사한다. 2) 모든 경우에 조사 결과를 gh issue comment로 이슈에 남긴다. 3) 재현 가능하고 원인이 특정된 버그인 경우에만: fix/issue-${ISSUE_NUMBER} 브랜치를 만들어 수정하고, 가능한 빌드/테스트로 검증한 뒤 gh pr create로 PR을 올려라. PR 본문에 이슈 번호를 링크하라. main에 직접 푸시하지 마라. 4) 정보가 부족하거나 재현 불가면 PR 없이 정보 요청 코멘트만 남기고 그 사실을 보고하라. 5) 절대 PR을 스스로 머지하지 마라. 최종 보고에 PR URL과 함께 머지 여부 확인을 요청하는 질문을 포함하라. 사용자가 이 세션에 머지를 지시하면 그때 gh pr merge --squash로 머지하라." \
+              --arg msg "GitHub 이슈가 생성되었다: ${REPO}#${ISSUE_NUMBER} \"${ISSUE_TITLE}\" (${ISSUE_URL}). 다음 절차를 따르라. 1) gh issue view로 본문을 읽고 리포를 클론해 원인을 조사한다. 2) 모든 경우에 조사 결과를 gh issue comment로 이슈에 남긴다. 3) 재현 가능하고 원인이 특정된 버그인 경우에만: fix/issue-${ISSUE_NUMBER} 브랜치를 만들어 수정하고, 가능한 빌드/테스트로 검증한 뒤 gh pr create로 PR을 올려라. PR 본문에 이슈 번호를 링크하라. main에 직접 푸시하지 마라. 4) 정보가 부족하거나 재현 불가면 PR 없이 정보 요청 코멘트만 남기고 그 사실을 보고하라. 5) 절대 PR을 스스로 머지하지 마라. 6) 마지막으로 작업 요약을 Slack 채널 #kirocrew에 보고하라. 방법: SLACK_BOT_TOKEN 환경변수(~/.kiro/crew/.env에 있음)를 읽어 curl -X POST https://slack.com/api/chat.postMessage -H \"Authorization: Bearer \$TOKEN\" -H \"Content-Type: application/json\" -d '{\"channel\": \"C0BNMUDPVA6\", \"text\": \"<요약>\"}' 형태로 전송. PR을 만들었으면 보고에 PR URL과 '리뷰 후 머지 지시를 주시면 머지하겠습니다'를 포함하라. 사용자가 이 세션에 머지를 지시하면 그때 gh pr merge --squash로 머지하라." \
               --arg key "hook:issue-${ISSUE_NUMBER}" \
               --arg name "Issue #${ISSUE_NUMBER}" \
               '{message: $msg, sessionKey: $key, name: $name, deliver: true, timeoutSeconds: 1500}')"
