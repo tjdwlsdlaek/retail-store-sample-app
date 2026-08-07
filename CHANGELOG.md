@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.3](https://github.com/tjdwlsdlaek/retail-store-sample-app/compare/v1.6.2...v1.6.3) (2026-08-07)
+
+
+### Bug Fixes
+
+* **ui:** compose cart add/remove Kiota calls into the returned Mono ([d4f9198](https://github.com/tjdwlsdlaek/retail-store-sample-app/commit/d4f9198a59c7ac29479261172c6d87415e3a7d52))
+
 ## [1.6.2](https://github.com/aws-containers/retail-store-sample-app/compare/v1.6.1...v1.6.2) (2026-07-28)
 
 
