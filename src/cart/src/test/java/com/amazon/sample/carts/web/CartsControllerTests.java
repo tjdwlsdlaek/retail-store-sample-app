@@ -165,4 +165,60 @@ public class CartsControllerTests {
       )
       .andExpect(status().isAccepted());
   }
+
+  @Test
+  void testAddItemRejectsNegativeQuantity() throws Exception {
+    mockMvc
+      .perform(
+        post("/carts/" + EMPTY_CART_ID + "/items")
+          .contentType(MediaType.APPLICATION_JSON_VALUE)
+          .content(TestUtil.convertObjectToJsonBytes(new Item("1", -5, 1000)))
+          .accept(MediaType.APPLICATION_JSON)
+      )
+      .andExpect(status().isBadRequest());
+
+    verify(this.service, never()).add(any(), any(), anyInt(), anyInt());
+  }
+
+  @Test
+  void testAddItemRejectsZeroQuantity() throws Exception {
+    mockMvc
+      .perform(
+        post("/carts/" + EMPTY_CART_ID + "/items")
+          .contentType(MediaType.APPLICATION_JSON_VALUE)
+          .content(TestUtil.convertObjectToJsonBytes(new Item("1", 0, 1000)))
+          .accept(MediaType.APPLICATION_JSON)
+      )
+      .andExpect(status().isBadRequest());
+
+    verify(this.service, never()).add(any(), any(), anyInt(), anyInt());
+  }
+
+  @Test
+  void testAddItemRejectsNegativeUnitPrice() throws Exception {
+    mockMvc
+      .perform(
+        post("/carts/" + EMPTY_CART_ID + "/items")
+          .contentType(MediaType.APPLICATION_JSON_VALUE)
+          .content(TestUtil.convertObjectToJsonBytes(new Item("1", 1, -1000)))
+          .accept(MediaType.APPLICATION_JSON)
+      )
+      .andExpect(status().isBadRequest());
+
+    verify(this.service, never()).add(any(), any(), anyInt(), anyInt());
+  }
+
+  @Test
+  void testUpdateItemRejectsNegativeQuantity() throws Exception {
+    mockMvc
+      .perform(
+        patch("/carts/" + POPULATED_CART_ID + "/items")
+          .contentType(MediaType.APPLICATION_JSON_VALUE)
+          .content(TestUtil.convertObjectToJsonBytes(new Item("1", -3, 1000)))
+          .accept(MediaType.APPLICATION_JSON)
+      )
+      .andExpect(status().isBadRequest());
+
+    verify(this.service, never()).update(any(), any(), anyInt(), anyInt());
+  }
 }

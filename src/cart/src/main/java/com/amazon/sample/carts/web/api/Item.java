@@ -19,6 +19,7 @@
 package com.amazon.sample.carts.web.api;
 
 import com.amazon.sample.carts.repositories.ItemEntity;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,8 +31,10 @@ public class Item {
 
   private String itemId;
 
+  @Min(value = 1, message = "quantity must be greater than 0")
   private int quantity;
 
+  @Min(value = 0, message = "unitPrice must not be negative")
   private int unitPrice;
 
   public static Item from(ItemEntity itemEntity) {
