@@ -23,6 +23,7 @@ import com.amazon.sample.carts.web.api.Cart;
 import com.amazon.sample.carts.web.api.Item;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -118,7 +119,7 @@ public class CartsController {
   @Operation(summary = "Add an item to a cart", operationId = "addItem")
   public Item addToCart(
     @PathVariable String customerId,
-    @RequestBody Item item
+    @Valid @RequestBody Item item
   ) {
     return Item.from(
       this.service.add(
@@ -151,7 +152,7 @@ public class CartsController {
   @Operation(summary = "Update an item in a cart", operationId = "updateItem")
   public void updateItem(
     @PathVariable String customerId,
-    @RequestBody Item item
+    @Valid @RequestBody Item item
   ) {
     this.service.update(
         customerId,
